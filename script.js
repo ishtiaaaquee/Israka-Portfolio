@@ -127,26 +127,6 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Typing effect for hero title (optional enhancement)
-const heroTitle = document.querySelector('#home h1');
-if (heroTitle) {
-    const text = heroTitle.innerHTML;
-    heroTitle.innerHTML = '';
-    heroTitle.style.opacity = '1';
-    
-    let index = 0;
-    function typeWriter() {
-        if (index < text.length) {
-            heroTitle.innerHTML += text.charAt(index);
-            index++;
-            setTimeout(typeWriter, 50);
-        }
-    }
-    
-    // Start typing effect after a short delay
-    setTimeout(typeWriter, 500);
-}
-
 // Add particle effect on mouse move (subtle)
 document.addEventListener('mousemove', (e) => {
     const heroSection = document.getElementById('home');
