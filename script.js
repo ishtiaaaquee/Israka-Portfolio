@@ -4,7 +4,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            const headerOffset = 80;
+            const headerOffset = 70;
             const elementPosition = target.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -32,16 +32,31 @@ if (mobileMenuBtn && mobileMenu) {
     });
 }
 
+// Debounce function for better performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 // Active navigation link on scroll
 const sections = document.querySelectorAll('section');
 const navLinks = document.querySelectorAll('.nav-link');
 
-window.addEventListener('scroll', () => {
+const updateActiveLink = debounce(() => {
     let current = '';
+    const scrollPosition = window.pageYOffset + 100;
+    
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        if (pageYOffset >= (sectionTop - 200)) {
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
             current = section.getAttribute('id');
         }
     });
@@ -52,13 +67,14 @@ window.addEventListener('scroll', () => {
             link.classList.add('text-secondary', 'border-b-2', 'border-secondary');
         }
     });
-});
+}, 50);
+
+window.addEventListener('scroll', updateActiveLink, { passive: true });
 
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
-let lastScroll = 0;
 
-window.addEventListener('scroll', () => {
+const updateNavbar = debounce(() => {
     const currentScroll = window.pageYOffset;
     
     if (currentScroll > 50) {
@@ -68,9 +84,9 @@ window.addEventListener('scroll', () => {
         navbar.classList.add('shadow-lg');
         navbar.classList.remove('shadow-2xl');
     }
-    
-    lastScroll = currentScroll;
-});
+}, 10);
+
+window.addEventListener('scroll', updateNavbar, { passive: true });
 
 // Intersection Observer for fade-in animations
 const observerOptions = {
@@ -101,12 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Observe project cards with stagger effect
-const projectCards = document.querySelectorAll('.project-card');
-projectCards.forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    
-    setTimeout(() => {
+document.addEventListener('DOMContentLoaded', () => {
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -121,32 +137,49 @@ projectCards.forEach((card, index) => {
         }, observerOptions);
         
         cardObserver.observe(card);
-    }, 100);
+    });
 });
 
-// Parallax effect for hero section
-window.addEventListener('scroll', () => {
+// Optimized parallax effect for hero section
+let ticking = false;
+
+const updateParallax = () => {
     const scrolled = window.pageYOffset;
     const heroSection = document.getElementById('home');
     
     if (heroSection && scrolled < window.innerHeight) {
-        heroSection.style.transform = `translateY(${scrolled * 0.5}px)`;
+        heroSection.style.transform = `translateY(${scrolled * 0.3}px)`;
     }
-});
+    ticking = false;
+};
 
-// Add particle effect on mouse move (subtle)
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+    }
+}, { passive: true });
+
+// Optimized particle effect on mouse move
+let mouseMoveTicking = false;
+
 document.addEventListener('mousemove', (e) => {
-    const heroSection = document.getElementById('home');
-    if (heroSection && e.clientY < window.innerHeight) {
-        const x = (e.clientX / window.innerWidth) * 20 - 10;
-        const y = (e.clientY / window.innerHeight) * 20 - 10;
-        
-        const circles = heroSection.querySelectorAll('.absolute.rounded-full');
-        circles.forEach((circle, index) => {
-            const speed = (index + 1) * 0.5;
-            circle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-            circle.style.transition = 'transform 0.3s ease-out';
+    if (!mouseMoveTicking && e.clientY < window.innerHeight) {
+        window.requestAnimationFrame(() => {
+            const heroSection = document.getElementById('home');
+            if (heroSection) {
+                const x = (e.clientX / window.innerWidth) * 15 - 7.5;
+                const y = (e.clientY / window.innerHeight) * 15 - 7.5;
+                
+                const circles = heroSection.querySelectorAll('.absolute.rounded-full');
+                circles.forEach((circle, index) => {
+                    const speed = (index + 1) * 0.3;
+                    circle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+                });
+            }
+            mouseMoveTicking = false;
         });
+        mouseMoveTicking = true;
     }
 });
 
