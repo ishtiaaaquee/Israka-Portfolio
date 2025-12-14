@@ -1,0 +1,66 @@
+/* Additional responsive fixes */
+
+/* Ensure all sections have proper spacing on mobile */
+@media (max-width: 640px) {
+    section {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+    
+    /* Hero section specific */
+    #home {
+        min-height: 100vh;
+        padding-top: 5rem !important;
+    }
+    
+    /* Text sizing for mobile */
+    h1 {
+        line-height: 1.2 !important;
+    }
+    
+    h2 {
+        line-height: 1.3 !important;
+    }
+    
+    /* Project cards full width on small screens */
+    .project-card {
+        width: 100% !important;
+    }
+    
+    /* Ensure images don't overflow */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Fix contact email wrapping */
+    .contact-email {
+        word-break: break-all;
+        font-size: 0.75rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+    section {
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+}
+
+/* Prevent horizontal scroll */
+body, html {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+}
+
+/* Fix mobile menu */
+#mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+#mobile-menu.show {
+    max-height: 500px;
+}
