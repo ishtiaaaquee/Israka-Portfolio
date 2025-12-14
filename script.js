@@ -74,8 +74,8 @@ window.addEventListener('scroll', () => {
 
 // Intersection Observer for fade-in animations
 const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.15,
+    rootMargin: '0px 0px -100px 0px'
 };
 
 const observer = new IntersectionObserver((entries) => {
@@ -83,14 +83,21 @@ const observer = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             entry.target.classList.add('animate-fade-in-up');
             entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
         }
     });
 }, observerOptions);
 
 // Observe all elements with fade-in-on-scroll class
-document.querySelectorAll('.fade-in-on-scroll').forEach(element => {
-    element.style.opacity = '0';
-    observer.observe(element);
+document.addEventListener('DOMContentLoaded', () => {
+    const fadeElements = document.querySelectorAll('.fade-in-on-scroll');
+    fadeElements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+        observer.observe(element);
+    });
 });
 
 // Observe project cards with stagger effect
